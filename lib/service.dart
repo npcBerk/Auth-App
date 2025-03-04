@@ -29,6 +29,40 @@ class Service {
   }
 }
 
+
+/* import 'package:dio/dio.dart';
+
+class Service {
+  static final Dio _dio = Dio(BaseOptions(
+    contentType: Headers.jsonContentType,
+    responseType: ResponseType.json,
+    validateStatus: (status) => status! < 500,
+  ));
+
+  static Future<Response> request(
+    String type,
+    String endpoint, {
+    Map<String, dynamic>? header,
+    Map<String, dynamic>? data,
+  }) async {
+    _dio.options.headers = header;
+
+    switch (type) {
+      case 'GET':
+        return await _dio.get(endpoint);
+      case 'POST':
+        return await _dio.post(endpoint, data: data);
+      case 'PUT':
+        return await _dio.put(endpoint, data: data);
+      case 'DELETE':
+        return await _dio.delete(endpoint);
+      default:
+        return await _dio.get(endpoint);
+    }
+  }
+} */
+
+
 void getData() {
   Service.request(
     'GET',

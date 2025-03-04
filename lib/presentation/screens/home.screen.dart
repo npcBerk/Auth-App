@@ -1,3 +1,4 @@
+import 'package:auth_app/presentation/screens/splash.screen.dart';
 import 'package:auth_app/providers/auth.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,10 +23,19 @@ class HomeScreen extends ConsumerWidget {
                 await authNotifier.logout();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                  MaterialPageRoute(builder: (context) => SplashScreen()),
                 );
               },
               child: Text("Logout"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => SplashScreen()),
+                );
+              },
+              child: Text("Splash Screen"),
             ),
           ],
         ),

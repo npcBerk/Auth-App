@@ -10,6 +10,7 @@ class SplashScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
+    final authNotifier = ref.read(authProvider.notifier);
 
     return Scaffold(
       body: Center(
@@ -18,7 +19,7 @@ class SplashScreen extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                if (authState.isLoggedIn) {
+                if (authState) {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -37,19 +38,50 @@ class SplashScreen extends ConsumerWidget {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Token Status'),
-                      content: Text(
-                        authState.tokenDetails ?? 'No token available',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Close'),
-                        ),
-                      ],
+                    return FutureBuilder<String?>(
+                      future: authNotifier.getToken(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return AlertDialog(
+                            title: Text('Token Status'),
+                            content: CircularProgressIndicator(),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Close'),
+                              ),
+                            ],
+                          );
+                        } else if (snapshot.hasError) {
+                          return AlertDialog(
+                            title: Text('Token Status'),
+                            content: Text('Error: ${snapshot.error}'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Close'),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return AlertDialog(
+                            title: Text('Token Status'),
+                            content: Text(snapshot.data ?? 'No token available'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Close'),
+                              ),
+                            ],
+                          );
+                        }
+                      },
                     );
                   },
                 );

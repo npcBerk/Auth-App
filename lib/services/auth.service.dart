@@ -1,47 +1,59 @@
-import 'package:auth_app/service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:auth_app/providers/auth.provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../service.dart';
 
 class AuthService {
-  final FlutterSecureStorage _storage = FlutterSecureStorage();
-  final ProviderReference ref;
+  static const String _baseUrl = 'https://fakestoreapi.com/auth';
+  static const FlutterSecureStorage _storage = FlutterSecureStorage();
 
-  AuthService(this.ref);
-
-  Future<bool> isLoggedIn() async {
-    final token = await _storage.read(key: 'token');
-    return token != null;
-  }
-
-  Future<void> logout() async {
-    await _storage.delete(key: 'token');
-    ref.read(authProvider.notifier).logout();
-  }
-
-  Future<bool> login(String username, String password) async {
+  // Kullanıcı Girişi (Login)
+  static Future<bool> login(String username, String password) async {
     try {
       final response = await Service.request(
         'POST',
-        'https://fakestoreapi.com/auth/login',
+        '$_baseUrl/login',
         data: {'username': username, 'password': password},
       );
 
-      if (response.statusCode == 200) {
-        await _storage.write(key: 'token', value: response.data['token']);
-        ref.read(authProvider.notifier).login(response.data['token']);
+      if (response.statusCode == 200 && response.data['token'] != null) {
+        await _storage.write(key: 'auth_token', value: response.data['token']);
         return true;
-      } else {
-        print('Login failed: ${response.statusMessage}');
-        return false;
       }
+      return false;
     } catch (e) {
       print('Login error: $e');
       return false;
     }
   }
 
-  Future<String?> getTokenDetails() async {
-    return await _storage.read(key: 'token');
+  // Kullanıcı Kaydı (Signup)
+  static Future<bool> signup(String username, String password) async {
+    try {
+      final response = await Service.request(
+        'POST',
+        'https://fakestoreapi.com/users',
+        data: {'username': username, 'password': password},
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Signup error: $e');
+      return false;
+    }
+  }
+
+  // Kullanıcı Çıkışı (Logout)
+  static Future<void> logout() async {
+    await _storage.delete(key: 'auth_token');
+  }
+
+  // Token Kontrolü
+  static Future<bool> isLoggedIn() async {
+    String? token = await _storage.read(key: 'auth_token');
+    return token != null;
+  }
+
+  // Token Okuma
+  static Future<String?> getToken() async {
+    return await _storage.read(key: 'auth_token');
   }
 }

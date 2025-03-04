@@ -1,3 +1,5 @@
+import 'package:auth_app/presentation/screens/home.screen.dart';
+import 'package:auth_app/presentation/screens/signup.screen.dart';
 import 'package:auth_app/providers/auth.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,10 +37,23 @@ class LoginScreen extends ConsumerWidget {
                   _usernameController.text,
                   _passwordController.text,
                 );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
               },
               child: Text("Login"),
             ),
             //if (authState) Text("Login Successful!"),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignUpScreen()),
+                );
+              },
+              child: Text("Sign Up"),
+            ),
           ],
         ),
       ),
