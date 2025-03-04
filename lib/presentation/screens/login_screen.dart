@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'signup_screen.dart'; // Import the SignUpScreen
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -12,7 +13,7 @@ class LoginScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             TextField(
               controller: emailController,
               decoration: InputDecoration(
@@ -39,7 +40,10 @@ class LoginScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/signup');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignUpScreen()),
+                );
               },
               child: Text('Sign Up'),
             ),
